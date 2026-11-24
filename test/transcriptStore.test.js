@@ -59,6 +59,17 @@ describe("TranscriptStore", () => {
     );
   });
 
+  test("trims name searches and ignores case without changing display names", () => {
+    const firstID = store.addStudent("Grace Lee");
+    const secondID = store.addStudent("GRACE LEE");
+    store.addStudent("Grace Hall");
+
+    assert.deepEqual(store.getStudentIDs("  gRaCe LeE  "), [firstID, secondID]);
+    assert.deepEqual(store.getStudentIDs("  Grace  "), []);
+    assert.equal(store.getTranscript(firstID).student.studentName, "Grace Lee");
+    assert.equal(store.getTranscript(secondID).student.studentName, "GRACE LEE");
+  });
+
   test("supports exact-name lookup and deletion", () => {
     const firstID = store.addStudent("Grace Lee");
     const secondID = store.addStudent("Grace Hall");
