@@ -34,6 +34,20 @@ describe("TranscriptStore", () => {
     });
   });
 
+  test("rejects a duplicate course grade and allows an explicit correction", () => {
+    const studentID = store.addStudent("Lin");
+    store.addGrade(studentID, "CS360", 0);
+
+    assert.throws(
+      () => store.addGrade(studentID, "  cs360  ", 92),
+      { message: "Grade already exists for course CS360" },
+    );
+    assert.equal(store.getGrade(studentID, "CS360"), 0);
+
+    store.changeGrade(studentID, "CS360", 92);
+    assert.equal(store.getGrade(studentID, "CS360"), 92);
+  });
+
   test("rejects invalid student, course, and grade inputs", () => {
     const studentID = store.addStudent("Noah");
 
